@@ -1,3 +1,4 @@
+// Modified by Xushengming222, 2026-10-15: electricity payment enhancement; see CHANGES.md.
 package com.ntu.electricity.ui.screens
 
 import android.content.ClipData
@@ -38,6 +39,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -60,14 +62,17 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.ntu.electricity.ui.theme.m3ColorSchemes
+import com.ntu.electricity.payment.PaymentRequest
 import com.ntu.electricity.viewmodel.HomeViewModel
+import com.ntu.electricity.BuildConfig
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel,
     onNavigateToHistory: () -> Unit,
-    onQuery: (studentId: String, password: String, campusId: String, buildingId: String, roomId: String) -> Unit,
+    onQuery: (PaymentRequest) -> Unit,
+    onPayment: (PaymentRequest) -> Unit,
     colorIndex: Int = 0,
     onColorChange: (Int) -> Unit = {}
 ) {
@@ -82,8 +87,59 @@ fun HomeScreen(
     var menuExpanded by remember { mutableStateOf(false) }
     var showColorDialog by remember { mutableStateOf(false) }
     var showAboutDialog by remember { mutableStateOf(false) }
+    var showPaymentNotice by remember { mutableStateOf(false) }
+    var showLicenseDialog by remember { mutableStateOf(false) }
     var selectedColorIndex by remember { mutableIntStateOf(colorIndex) }
     val context = LocalContext.current
+
+    fun validatedRequest(): PaymentRequest? {
+        val campusId = viewModel.getCampusId(selectedCampus)
+        val buildingId = viewModel.getBuildingId(selectedCampus, selectedBuilding)
+        val roomId = viewModel.getRoomId(selectedCampus, selectedBuilding, selectedRoom)
+        if (studentId.isBlank() || password.isEmpty() || campusId.isNullOrBlank() ||
+            buildingId.isNullOrBlank() || roomId.isNullOrBlank()) {
+            Toast.makeText(context, "请填写账号密码并选择完整的宿舍信息", Toast.LENGTH_SHORT).show()
+            return null
+        }
+        viewModel.saveConfig(studentId.trim(), password, selectedCampus, selectedBuilding, selectedRoom, true)
+        return PaymentRequest(studentId.trim(), password, campusId, buildingId, roomId,
+            selectedCampus, selectedBuilding, selectedRoom)
+    }
+
+    if (showPaymentNotice) {
+        AlertDialog(
+            onDismissRequest = { showPaymentNotice = false },
+            title = { Text("缴费使用提示") },
+            text = {
+                Text("本功能使用学校网页版缴费平台，请谨慎操作，付款前核对宿舍信息和缴费金额。\n\n" +
+                    "支付方式：将付款码保存至相册，再打开对应的微信或支付宝，通过“扫一扫”从相册选择付款码，确认后完成付款。")
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    showPaymentNotice = false
+                    validatedRequest()?.let(onPayment)
+                }) { Text("已了解，继续缴费") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showPaymentNotice = false }) { Text("取消") }
+            }
+        )
+    }
+
+    if (showLicenseDialog) {
+        val licenseText = remember {
+            context.assets.open("NOTICE").bufferedReader().use { it.readText() } + "\n\n" +
+                context.assets.open("LICENSE").bufferedReader().use { it.readText() }
+        }
+        AlertDialog(
+            onDismissRequest = { showLicenseDialog = false },
+            title = { Text("Apache 2.0 开源许可与署名") },
+            text = { Column(Modifier.verticalScroll(rememberScrollState())) {
+                Text(licenseText, style = MaterialTheme.typography.bodySmall)
+            } },
+            confirmButton = { TextButton(onClick = { showLicenseDialog = false }) { Text("关闭") } }
+        )
+    }
 
     // Color selection dialog
     if (showColorDialog) {
@@ -138,40 +194,50 @@ fun HomeScreen(
             onDismissRequest = { showAboutDialog = false },
             title = { Text("关于") },
             text = {
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Row(Modifier.fillMaxWidth().padding(vertical = 12.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text("当前版本")
+                        Text("V ${BuildConfig.VERSION_NAME}", color = MaterialTheme.colorScheme.primary)
+                    }
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
                                 val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                                 cm.setPrimaryClip(ClipData.newPlainText("qq", "2451177632"))
-                                Toast.makeText(context, "已复制作者QQ，反馈请加QQ", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "已复制原作者QQ", Toast.LENGTH_SHORT).show()
                             }
                             .padding(vertical = 12.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("当前版本")
-                        Text("V 1.0", color = MaterialTheme.colorScheme.primary)
+                        Text("原作者联系")
+                        Text("QQ 2451177632", color = MaterialTheme.colorScheme.primary)
+                    }
+                    Row(Modifier.fillMaxWidth().clickable {
+                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/UWPBOOM/NTU_EcoCheck")))
+                    }.padding(vertical = 12.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text("参考项目")
+                        Text("UWPBOOM/NTU_EcoCheck", color = MaterialTheme.colorScheme.primary)
                     }
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/UWPBOOM/NTU_EcoCheck"))
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Xushengming222/NTU_EcoCheck/releases"))
                                 context.startActivity(intent)
                             }
                             .padding(vertical = 12.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("检查更新")
+                        Text("增强版更新")
                         Text("GitHub", color = MaterialTheme.colorScheme.primary)
                     }
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.apache.org/licenses/LICENSE-2.0"))
-                                context.startActivity(intent)
+                                showAboutDialog = false
+                                showLicenseDialog = true
                             }
                             .padding(vertical = 12.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
@@ -179,6 +245,8 @@ fun HomeScreen(
                         Text("开源许可")
                         Text("Apache 2.0", color = MaterialTheme.colorScheme.primary)
                     }
+                    Text("增强版由 Xushengming222 维护。基于参考项目新增网页版缴费入口、登录验证保护、手机支付适配和原创图标。非学校官方应用。",
+                        style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             },
             confirmButton = {
@@ -332,41 +400,29 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Button(
-                onClick = {
-                    // Save config first so data persists even if process is killed
-                    viewModel.saveConfig(
-                        studentId.trim(),
-                        password.trim(),
-                        selectedCampus,
-                        selectedBuilding,
-                        selectedRoom,
-                        true
-                    )
-                    val campusId = viewModel.getCampusId(selectedCampus) ?: ""
-                    val buildingId = viewModel.getBuildingId(selectedCampus, selectedBuilding) ?: ""
-                    val roomId = viewModel.getRoomId(selectedCampus, selectedBuilding, selectedRoom) ?: ""
-                    onQuery(
-                        studentId.trim(),
-                        password.trim(),
-                        campusId,
-                        buildingId,
-                        roomId
-                    )
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = MaterialTheme.shapes.large,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(
-                    text = "一键查询",
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.SemiBold
-                )
+                Button(
+                    onClick = {
+                        validatedRequest()?.let { request ->
+                            onQuery(request)
+                        }
+                    },
+                    modifier = Modifier.weight(1f).height(56.dp),
+                    shape = MaterialTheme.shapes.large,
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                ) {
+                    Text("一键查询", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
+                }
+                OutlinedButton(
+                    onClick = { showPaymentNotice = true },
+                    modifier = Modifier.weight(1f).height(56.dp),
+                    shape = MaterialTheme.shapes.large
+                ) {
+                    Text("一键缴费", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))

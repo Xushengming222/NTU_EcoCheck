@@ -1,0 +1,17 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+body { margin:0; font:12px Arial; } .header-w { width:1200px; height:80px; }
+.content-w { width:1100px; margin:auto; } .detail { width:1000px; height:600px; padding-left:100px; }
+table { border-collapse:collapse; } td { color:#999; } #zhye { color:#0052d9; font-size:30px; }
+select { width:140px; } .amount { width:160px; }
+</style></head><body><div class="header-w">测试缴费页面</div><div class="content-w"><div class="detail">
+<form id="paymentForm"><table width="1000" style="table-layout:fixed"><colgroup>
+<col width="15%"><col width="1%"><col width="20%"><col width="20%"><col width="20%"><col width="24%">
+</colgroup><tbody><tr><td>校　区：</td><td colspan="2"><select id="schoolid"><option value="1">测试校区</option></select></td>
+<td>楼　栋：</td><td colspan="2"><select id="building"><option value="2">测试楼栋</option></select></td></tr>
+<tr><td>房　间：</td><td colspan="5"><select id="room"><option value="123">201</option></select></td></tr>
+<tr><td>剩余电量：</td><td id="zhye">123.45678</td><td></td><td>缴费金额：</td><td colspan="2">
+<table width="400"><tr><td><input class="amount" id="money" name="money" inputmode="decimal" value=""></td><td>元</td></tr></table>
+</td></tr><tr><td colspan="6"><div class="button-w"><input type="button" id="pay" value="确认支付"></div></td></tr>
+</tbody></table></form></div></div><script>
+window.paymentClicks=0; document.getElementById('pay').onclick=function(){window.paymentClicks++;};
+</script></body></html>

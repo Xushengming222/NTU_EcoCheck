@@ -1,0 +1,34 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=1200"><style>
+* { margin:0; padding:0; } body { font:12px Arial; }
+.content-w { width:1200px; min-width:1000px; margin:auto; }
+.cont-fr { width:1000px; float:right; border:1px solid #ddd; }
+.subnav h3 { width:1000px; margin-left:136px; height:26px; line-height:26px; }
+.cont-fr-tit h2 { width:756px; height:38px; line-height:38px; }
+.tit-name { height:38px; } .tit-name p { width:500px; height:38px; line-height:38px; float:left; white-space:nowrap; }
+.payment-w { width:1000px; padding:10px 20px 20px; height:320px; }
+.payment-w p { height:38px; line-height:38px; float:left; }
+.mode-pay { width:1000px; padding:10px 0 20px 40px; overflow:hidden; }
+.mode-pay p { width:100%; } .logo_list li { width:188px; height:38px; float:left; margin-right:40px; margin-bottom:15px; list-style:none; }
+.bank-logo { width:188px; height:38px; border:1px solid #ddd; }
+.button-w { border-top:1px solid #ddd; overflow:hidden; }
+.button-w input { float:right; margin-left:48px; width:100px; height:25px; color:white; background:#0052d9; border:0; }
+</style></head><body><div class="content-w"><div class="cont-fr">
+<div class="subnav"><h3>首页 &gt; 缴费项目 &gt; 支付方式</h3></div>
+<div class="cont-fr-tit"><h2>请选择支付方式</h2></div>
+<div class="tit-name"><p>订单编号：TEST_ORDER_20261015_NOT_A_REAL_ORDER</p><p>应付金额：50.25 元</p></div>
+<form id="officialPaymentForm" action="/test-only-do-not-submit" method="post" style="width:1100px">
+<input type="hidden" id="payType" name="payType" value="ALIPAY_TEST">
+<input type="hidden" name="order" value="TEST_ONLY">
+<div class="payment-w"><div class="mode-pay"><p>请选择支付方式</p><ul class="logo_list">
+<li><a href="#alipay" id="alipay" class="bank-logo">支付宝</a></li>
+<li><a href="#wechat" id="wechat" class="bank-logo"><img alt="微信支付" src="/images/weixinpay-logo.svg" width="188" height="38"></a></li>
+</ul></div><p>单笔限额（元）：100000.00</p><p>备注：请选择官方提供的支付方式；订单金额与信息由原页面核对。</p></div>
+<div class="button-w" style="width:1100px;margin-left:180px"><div style="width:1000px;margin-left:160px">
+<input id="confirm" name="confirm" type="button" value="确认支付" style="width:1000px;text-indent:400px">
+</div></div></form></div></div>
+<script>
+window.paymentClicks=0;
+document.getElementById('confirm').onclick=function(){window.paymentClicks++;};
+document.getElementById('alipay').onclick=function(event){event.preventDefault();document.getElementById('payType').value='ALIPAY_TEST';};
+document.getElementById('wechat').onclick=function(event){event.preventDefault();document.getElementById('payType').value='WECHAT_TEST';};
+</script></body></html>

@@ -1,3 +1,4 @@
+// Modified by Xushengming222, 2026-10-15: electricity payment enhancement; see CHANGES.md.
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -13,13 +14,17 @@ android {
         applicationId = "com.ntu.electricity"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 9
+        versionName = "1.0.8"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
+        debug {
+            applicationIdSuffix = ".payment"
+            versionNameSuffix = "-payment-test"
+        }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
@@ -38,6 +43,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
@@ -64,6 +70,8 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.jsoup)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.zxing.core)
+    testImplementation(libs.junit)
 
     debugImplementation(libs.androidx.ui.tooling)
 }

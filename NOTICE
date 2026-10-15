@@ -1,0 +1,22 @@
+NTU EcoCheck - electricity query and payment enhancement
+
+Based on NTU_EcoCheck by UWPBOOM:
+https://github.com/UWPBOOM/NTU_EcoCheck
+Reference commit: d88044b696267f7f5d19c600ca237c1135776d01
+
+Enhancements Copyright 2026 Xushengming222.
+https://github.com/Xushengming222/NTU_EcoCheck
+
+The upstream application's About screen identifies Apache License 2.0.
+This enhancement is distributed under Apache License 2.0; see LICENSE.
+Original authorship and attribution are retained. See docs/upstream-README.md.
+
+Modifications include an official web payment entry, login verification and
+retry protection, mobile checkout layouts, local payment QR processing,
+an original launcher icon, user notices, tests and documentation.
+Changed source files carry modification notices. See CHANGES.md and
+docs/modified-files.md for the scope of changes.
+
+This student-maintained tool only integrates Nantong University's systems.
+It is not an official university application and does not reproduce its seal.
+University and payment-provider names identify compatible services only.

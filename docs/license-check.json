@@ -1,0 +1,19 @@
+{
+  "checkedAt": "2026-10-15",
+  "repository": "UWPBOOM/NTU_EcoCheck",
+  "branch": "master",
+  "commit": "d88044b696267f7f5d19c600ca237c1135776d01",
+  "githubDetectedLicense": null,
+  "licensePaths": [],
+  "readmeLicenseText": "仅供南通大学校内使用。",
+  "originalAboutLabel": "Apache 2.0",
+  "status": "Distribution follows upstream About declaration of Apache-2.0 and user clarification that campus wording describes compatibility.",
+  "sources": [
+    "https://github.com/UWPBOOM/NTU_EcoCheck/blob/master/README.md#license",
+    "https://api.github.com/repos/UWPBOOM/NTU_EcoCheck",
+    "https://api.github.com/repos/UWPBOOM/NTU_EcoCheck/git/trees/master?recursive=1",
+    "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository"
+  ],
+  "releaseLicense": "Apache-2.0",
+  "userClarification": "仅供校内使用说明只适配南通大学认证系统，并非另加再分发限制。"
+}

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<!-- Modified by Xushengming222, 2026-10-15: electricity payment enhancement; see CHANGES.md. -->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="zh">
     <string name="app_name">NTU电费查询</string>
     <string name="student_id_hint">学号</string>
     <string name="password_hint">密码</string>
