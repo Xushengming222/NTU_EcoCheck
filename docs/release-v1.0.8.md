@@ -1,4 +1,6 @@
-# 1.0.8 — 查询与缴费增强版（测试版）
+# 1.0.8 发布草稿（未发布）
+
+此版本没有创建公开 Release，实际首发内容见 [1.0.9 发布说明](release-v1.0.9.md)。以下为当时的草稿记录。
 
 基于 **[UWPBOOM/NTU_EcoCheck](https://github.com/UWPBOOM/NTU_EcoCheck)** 修改，参考提交 `d88044b696267f7f5d19c600ca237c1135776d01`，原查询实现与宿舍基础数据保留原作者署名。增强版由 **Xushengming222** 维护，按 **Apache License 2.0** 分发，非学校官方应用。
 
